@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Handlers Section</title>
+  <link rel="stylesheet" href="H.css">
+</head>
+<body class="locked">
+  <!-- PIN gate: the page stays hidden until a 12-digit PIN from Firebase is entered -->
+  <div class="pin-modal" id="pinModal" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
+    <form class="pin-box" id="pinForm" autocomplete="off">
+      <svg class="pin-lock" viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor"
+           stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="4" y="10" width="16" height="11" rx="2.5"/>
+        <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+      </svg>
+      <h2 id="pinTitle">Enter PIN code</h2>
+      <p class="pin-sub">Enter your 12-digit PIN to view this page.</p>
+      <div class="pin-inputs" id="pinInputs"></div>
+      <p class="pin-error" id="pinError" role="alert" aria-live="assertive"></p>
+      <button type="submit" class="pin-submit" id="pinSubmit">Unlock</button>
+      <button type="button" class="pin-back" id="pinBack">Back</button>
+    </form>
+  </div>
+
+  <header class="topbar">
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+      <svg viewBox="0 0 24 24" width="100%" height="100%" fill="currentColor" aria-hidden="true">
+        <circle cx="3.5" cy="6" r="1.7"/><circle cx="3.5" cy="12" r="1.7"/><circle cx="3.5" cy="18" r="1.7"/>
+        <rect x="8" y="4.6" width="14" height="2.8" rx=".4"/>
+        <rect x="8" y="10.6" width="14" height="2.8" rx=".4"/>
+        <rect x="8" y="16.6" width="14" height="2.8" rx=".4"/>
+      </svg>
+    </button>
+    <h1>Handlers Section</h1>
+  </header>
+
+  <main class="card-list" id="cardList"></main>
+
+  <div class="scrim" id="scrim"></div>
+  <div class="popup-backdrop" id="popupBackdrop"></div>
+
+  <!-- Handlers Menu -->
+  <aside class="drawer" id="drawer" aria-label="Handlers Menu" inert>
+    <h2 class="drawer-title">Handlers Menu</h2>
+
+    <!-- Banner (the + button changes it; saved in Firebase on the account) -->
+    <div class="banner">
+      <img class="banner-img" id="meBanner" alt="Your banner" hidden>
+      <div class="banner-default" id="meBannerDefault" aria-hidden="true"></div>
+      <button type="button" class="plus banner-plus" id="bannerBtn" aria-label="Change banner">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2"
+             stroke-linecap="round" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg>
+      </button>
+    </div>
+
+    <div class="me">
+      <div class="me-photo">
+        <img id="mePhoto" alt="Your profile photo" hidden>
+        <svg id="mePhotoDefault" viewBox="0 0 40 48" aria-hidden="true">
+          <circle cx="20" cy="17" r="8" fill="#fff"/>
+          <path d="M6 44v-4a8 8 0 0 1 8-8h12a8 8 0 0 1 8 8v4z" fill="#fff"/>
+        </svg>
+        <button type="button" class="plus" id="photoBtn" aria-label="Change profile photo">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2"
+               stroke-linecap="round" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+      </div>
+      <div class="me-text">
+        <p class="me-name" id="meName">User Name</p>
+        <p class="me-ssid" id="meSsid">SSID</p>
+      </div>
+    </div>
+    <p class="photo-note" id="photoNote" role="status" aria-live="polite"></p>
+
+    <p class="drawer-label">Your infos</p>
+    <ul class="infos" id="meInfos"></ul>
+
+    <p class="drawer-label small">Your important ID</p>
+    <div class="id-card">
+      <p class="id-kind" id="idKind">Your ID</p>
+      <p class="id-value" id="idValue">&nbsp;</p>
+      <button type="button" class="id-copy" id="copyBtn">Copy</button>
+    </div>
+
+    <div class="drawer-actions">
+      <button type="button" class="pill" id="changeUserBtn" aria-haspopup="dialog" aria-expanded="false">Change User</button>
+      <button type="button" class="pill" id="signOutBtn">Sign Out</button>
+    </div>
+
+    <button type="button" class="back-main" id="backMain">
+      <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 4h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-8"/>
+        <path d="M4 12h10"/>
+        <path d="M8 8l-4 4 4 4"/>
+      </svg>
+      <span>Back to main</span>
+    </button>
+  </aside>
+
+  <!-- Change User: choose which account type the cards show -->
+  <div class="type-popup" id="typePopup" role="dialog" aria-label="Change User" hidden>
+    <p class="type-title">Change User</p>
+    <div class="type-list" id="typeList"></div>
+  </div>
+
+  <!-- Small loading modal shown briefly before Sign Out -->
+  <div class="signout-overlay" id="signoutOverlay" role="alert" aria-live="assertive" hidden>
+    <div class="signout-box">
+      <span class="spinner" aria-hidden="true"></span>
+      <p>Signing out...</p>
+    </div>
+  </div>
+
+  <!-- Small loading modal shown while the profile photo is saved -->
+  <div class="signout-overlay" id="photoOverlay" role="alert" aria-live="assertive" hidden>
+    <div class="signout-box">
+      <span class="spinner" aria-hidden="true"></span>
+      <p id="photoOverlayText">Changing profile...</p>
+    </div>
+  </div>
+
+  <input type="file" id="photoInput" accept="image/*" hidden>
+  <input type="file" id="bannerInput" accept="image/*" hidden>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="accounts-db.js"></script>
+  <script src="H.js"></script>
+</body>
+</html>
