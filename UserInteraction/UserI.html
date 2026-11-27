@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="Logo.jpg">
+  <title>R.I.A User</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="banner">
+    <img src="B.jpg" alt="Banner">
+    <button class="nexus-pill" onclick="openFeatureModal('Nexus R.I.A')" aria-label="Open Nexus R.I.A">
+        <span class="nexus-text">Nexus R.I.A</span>
+        <svg class="nexus-arrow" viewBox="0 0 14 24" aria-hidden="true"><path d="M2 2l10 10L2 22" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+</div>
+
+<button class="list-btn" onclick="toggleAdvancedMenu()" aria-label="Open Advanced Menu">
+    <svg viewBox="0 0 24 24"><circle cx="3.6" cy="6.5" r="1.5" fill="#fff"/><circle cx="3.6" cy="12" r="1.5" fill="#fff"/><circle cx="3.6" cy="17.5" r="1.5" fill="#fff"/><rect x="7.5" y="5" width="14" height="3" rx="1.5" fill="#fff"/><rect x="7.5" y="10.5" width="14" height="3" rx="1.5" fill="#fff"/><rect x="7.5" y="16" width="14" height="3" rx="1.5" fill="#fff"/></svg>
+</button>
+
+<button class="gear-btn" onclick="toggleSidebar()" aria-label="Open Settings">
+    <svg class="gear-icon" viewBox="0 0 24 24">
+        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+    </svg>
+</button>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+    <button class="close-btn" onclick="toggleSidebar()" aria-label="Close Settings">
+        <svg class="close-icon" viewBox="0 0 24 24">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+    </button>
+
+    <nav class="menu-list">
+        <div class="menu-item" onclick="selectOption('Information')">
+            <svg class="menu-icon" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+            <span class="menu-text">Information</span>
+        </div>
+
+        <div class="menu-item" onclick="selectOption('System Notice')">
+            <svg class="menu-icon" viewBox="0 0 24 24">
+                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+            </svg>
+            <span class="menu-text">System Notice</span>
+        </div>
+
+        <div class="menu-item" onclick="selectOption('Social Media\'s')">
+            <svg class="menu-icon" viewBox="0 0 24 24">
+                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+            </svg>
+            <span class="menu-text">Social Media's</span>
+        </div>
+
+        <div class="menu-item" onclick="selectOption('Other Apps')">
+            <svg class="menu-icon" viewBox="0 0 24 24">
+                <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/>
+            </svg>
+            <span class="menu-text">Other Apps</span>
+        </div>
+    </nav>
+</aside>
+
+<div class="adv-overlay" id="advOverlay" onclick="toggleAdvancedMenu()"></div>
+
+<aside class="adv-menu" id="advMenu" aria-label="Advanced Menu">
+    <div class="adv-title">Advanced Menu</div>
+    <nav class="adv-list">
+        <button class="adv-item" onclick="selectAdvanced('Fast Login')">
+            <span class="adv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M2.5 21v-3.5C2.5 15 4.5 13.5 7 13.5h3.5"/><path d="M14 18.5l3 3 5.5-6" stroke-width="2"/></svg></span>
+            <span class="adv-label">Fast Login</span>
+            <svg class="adv-chevron" viewBox="0 0 14 24"><path d="M2 2l10 10L2 22" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="adv-item" onclick="selectAdvanced('Users List')">
+            <span class="adv-icon"><svg viewBox="0 0 28 24"><g fill="#000"><circle cx="14" cy="7" r="3.8"/><path d="M7.5 19c0-3.3 2.9-5.2 6.5-5.2s6.5 1.9 6.5 5.2v1.5h-13z"/><circle cx="5" cy="9" r="2.8"/><path d="M0 19.5c0-2.5 2-4 4.8-4 .9 0 1.7.2 2.4.5-1 1-1.5 2.3-1.6 3.8V20H0z"/><circle cx="23" cy="9" r="2.8"/><path d="M28 19.5c0-2.5-2-4-4.8-4-.9 0-1.7.2-2.4.5 1 1 1.5 2.3 1.6 3.8V20H28z"/></g></svg></span>
+            <span class="adv-label">Users List</span>
+            <svg class="adv-chevron" viewBox="0 0 14 24"><path d="M2 2l10 10L2 22" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="adv-item" data-href="../HandlersSection/H.html" onclick="redirectTo(this.dataset.href)">
+            <span class="adv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.8"/><path d="M8 14c0-3 1.5-5 4-5s4 2 4 5z"/><rect x="2.5" y="15" width="19" height="6" rx="1"/><path d="M6 18h1M9 18h1M12 18h1M15 18h1M18 18h1" stroke-width="1.2"/></svg></span>
+            <span class="adv-label">Handlers Section</span>
+            <svg class="adv-chevron" viewBox="0 0 14 24"><path d="M2 2l10 10L2 22" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="adv-item" onclick="selectAdvanced('Executable Files')">
+            <span class="adv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l5 5v13H7z"/><path d="M10 12h7M10 15.5h7M10 19h5"/><path d="M2 22L21 3" stroke="#e00000" stroke-width="1.8"/></svg></span>
+            <span class="adv-label">Executable Files</span>
+            <svg class="adv-chevron" viewBox="0 0 14 24"><path d="M2 2l10 10L2 22" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="adv-item" onclick="selectAdvanced('Repair & Reboot')">
+            <span class="adv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+            <span class="adv-label">Repair &amp; Reboot</span>
+            <svg class="adv-chevron" viewBox="0 0 14 24"><path d="M2 2l10 10L2 22" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="adv-item" onclick="selectAdvanced('Banned Accounts')">
+            <span class="adv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M2.5 21v-3.5C2.5 15 4.5 13.5 7 13.5h4"/><circle cx="17.5" cy="17.5" r="4.3" stroke="#e00000" stroke-width="1.8"/><path d="M14.5 20.5l6-6" stroke="#e00000" stroke-width="1.8"/></svg></span>
+            <span class="adv-label">Banned Accounts</span>
+            <svg class="adv-chevron" viewBox="0 0 14 24"><path d="M2 2l10 10L2 22" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+    </nav>
+    <button class="adv-close" onclick="toggleAdvancedMenu()">
+        <svg viewBox="0 0 14 24"><path d="M12 2L2 12l10 10" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Close</span>
+    </button>
+</aside>
+
+<div class="container">
+    <img src="Logo.jpg" class="logo">
+
+    <h2>What kind of user are you?</h2>
+
+    <button class="mainBtn" onclick="location.href='../LoginStudent/indexS.html'">
+    Student
+    </button>
+
+    <button class="mainBtn" onclick="location.href='../LoginTeacher/indexT.html'">
+    Teacher
+    </button>
+</div>
+
+<div class="bottom">
+    <a href="javascript:void(0);" onclick="openCreateAccountModal()" class="bottom-link">Create Account</a>
+    <a href="../SpecialUserSection/SpecialUser.html" class="bottom-link">Special User</a>
+</div>
+
+<div id="createAccountModal" class="info-modal">
+    <div class="modalContent create-account-content">
+        <div class="modalHeader create-account-header">
+            <h2>Create Account</h2>
+            <button id="closeCreateAccount" aria-label="Close Create Account">&times;</button>
+        </div>
+        
+        <div id="createAccountView1" class="create-account-body">
+            <img src="Logo.jpg" alt="Logo" class="create-account-logo">
+            <button class="register-btn" onclick="switchCreateAccountView('role-select', this)">Register</button>
+        </div>
+
+        <div id="createAccountViewRole" class="create-account-body" style="display: none;">
+            <img src="Logo.jpg" alt="Logo" class="create-account-logo">
+            <button class="register-btn" onclick="switchCreateAccountView('student-form', this)">Student</button>
+            <button class="register-btn" onclick="switchCreateAccountView('teacher-form', this)">Teacher</button>
+            <p class="create-account-note">Note: Please wait up to 2 minutes before submitting another request. Thank you for your patience.</p>
+
+            <button type="button" id="specialsToggle" class="specials-toggle" aria-label="Specials menu" aria-haspopup="true" aria-expanded="false" onclick="toggleSpecialsMenu(event)">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="3.5" cy="6" r="1.8"/><circle cx="3.5" cy="12" r="1.8"/><circle cx="3.5" cy="18" r="1.8"/><rect x="8" y="4.8" width="14" height="2.4" rx="0.4"/><rect x="8" y="10.8" width="14" height="2.4" rx="0.4"/><rect x="8" y="16.8" width="14" height="2.4" rx="0.4"/></svg>
+            </button>
+            <div id="specialsMenu" class="specials-menu" role="menu" aria-label="Specials">
+                <h3>Specials</h3>
+                <button type="button" role="menuitem" class="specials-item" onclick="openSpecialForm('Handlers')">Handlers</button>
+                <button type="button" role="menuitem" class="specials-item dev-locked" onclick="requestDeveloperAccess(function(){ openSpecialForm('Developers'); })"><svg class="dev-lock-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5a5 5 0 0 0-5 5V9H6a2 2 0 0 0-2 2v9.5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V11a2 2 0 0 0-2-2h-1V6.5a5 5 0 0 0-5-5zm-3 5a3 3 0 0 1 6 0V9H9zm3 7.2a1.6 1.6 0 0 1 .9 2.93V18.5h-1.8v-1.87A1.6 1.6 0 0 1 12 13.7z"/></svg>Developers</button>
+                <button type="button" role="menuitem" class="specials-item" onclick="openSpecialForm('Test Account')">Test Account</button>
+                <button type="button" role="menuitem" class="specials-item" onclick="openSpecialForm('Super Account')">Super Account</button>
+            </div>
+        </div>
+
+        <div id="createAccountViewStudent" class="create-account-form-body" style="display: none;">
+            <div class="form-header-container">
+                <div class="form-header-left">
+                    <span class="form-role-title">Student</span>
+                    <img src="Logo.jpg" alt="Logo" class="form-main-logo">
+                </div>
+                <div class="form-header-right">
+                    <span class="developer-label">Developer</span>
+                    <span class="developer-name">Cotcots</span>
+                    <p class="form-instruction-note"><strong>Note &amp; Reminder:</strong> Please ensure all registration details are accurate and use a strong password, as you will need these credentials every time you log in to your account. <strong>Warning:</strong> Never share your login credentials with anyone or reuse a password from other platforms to protect your account from unauthorized access.</p>
+                </div>
+            </div>
+            
+            <form class="account-form student-form" data-step="1" onsubmit="handleAccountRequest(event)">
+                <div class="student-step" data-step="1">
+                    <div class="input-group">
+                        <label>LRN:</label>
+                        <input type="text" name="lrn" placeholder="Type your LRN here..." required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password:</label>
+                        <input type="password" name="password" placeholder="Type your Password here..." required>
+                    </div>
+                    <div class="input-group">
+                        <label>School:</label>
+                        <input type="text" name="school" placeholder="Type your School here..." required>
+                    </div>
+                    <button type="button" class="request-btn" onclick="studentNextStep(this.form, this)">Next</button>
+                </div>
+
+                <div class="student-step" data-step="2" style="display: none;">
+                    <div class="input-group">
+                        <label>User Name:</label>
+                        <input type="text" name="username" placeholder="Type your User Name here..." required>
+                    </div>
+                    <div class="input-group">
+                        <label>Gr &amp; Sec:</label>
+                        <input type="text" name="gradeSection" placeholder="Type your Grade &amp; Section here..." required>
+                    </div>
+                    <div class="input-group">
+                        <label>Adviser:</label>
+                        <input type="text" name="adviser" placeholder="Type your Adviser SureName here..." required>
+                    </div>
+                    <button type="submit" class="request-btn">Request</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="createAccountViewSpecial" class="create-account-form-body" style="display: none;">
+            <div class="form-header-container">
+                <div class="form-header-left">
+                    <span class="form-role-title" id="specialRoleTitle">Special</span>
+                    <img src="Logo.jpg" alt="Logo" class="form-main-logo">
+                </div>
+                <div class="form-header-right">
+                    <span class="developer-label">Developer</span>
+                    <span class="developer-name">Cotcots</span>
+                    <p class="form-instruction-note"><strong>Note &amp; Reminder:</strong> Please ensure all registration details are accurate and use a strong password, as you will need these credentials every time you log in to your account. <strong>Warning:</strong> Never share your login credentials with anyone or reuse a password from other platforms to protect your account from unauthorized access.</p>
+                </div>
+            </div>
+
+            <form class="account-form special-form" data-step="1" onsubmit="handleAccountRequest(event)">
+                <div id="specialFields" class="special-fields"></div>
+            </form>
+        </div>
+
+        <div id="createAccountViewTeacher" class="create-account-form-body" style="display: none;">
+            <div class="form-header-container">
+                <div class="form-header-left">
+                    <span class="form-role-title">Teacher</span>
+                    <img src="Logo.jpg" alt="Logo" class="form-main-logo">
+                </div>
+                <div class="form-header-right">
+                    <span class="developer-label">Developer</span>
+                    <span class="developer-name">Cotcots</span>
+                    <p class="form-instruction-note"><strong>Note &amp; Reminder:</strong> Please ensure all registration details are accurate and use a strong password, as you will need these credentials every time you log in to your account. <strong>Warning:</strong> Never share your login credentials with anyone or reuse a password from other platforms to protect your account from unauthorized access.</p>
+                </div>
+            </div>
+            
+            <form class="account-form teacher-form" data-step="1" onsubmit="handleAccountRequest(event)">
+                <div class="student-step" data-step="1">
+                    <div class="input-group">
+                        <label>Contact No:</label>
+                        <input type="text" name="contact" placeholder="Type your Contact No. here..." required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password:</label>
+                        <input type="password" name="password" placeholder="Type your Password here..." required>
+                    </div>
+                    <div class="input-group">
+                        <label>School:</label>
+                        <input type="text" name="school" placeholder="Type your School here..." required>
+                    </div>
+                    <button type="button" class="request-btn" onclick="studentNextStep(this.form, this)">Next</button>
+                </div>
+
+                <div class="student-step" data-step="2" style="display: none;">
+                    <div class="input-group">
+                        <label>User Name:</label>
+                        <input type="text" name="username" placeholder="Type your User Name here..." required>
+                    </div>
+                    <div class="input-group">
+                        <label>Gr &amp; Sec:</label>
+                        <input type="text" name="gradeSection" placeholder="Type your Grade &amp; Section here..." required>
+                    </div>
+                    <div class="input-group">
+                        <label>Depart:</label>
+                        <input type="text" name="department" placeholder="Type your Depart here..." required>
+                    </div>
+                    <button type="submit" class="request-btn">Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="successModal" class="info-modal">
+    <div class="modalContent success-modal-content">
+        <img src="Logo.jpg" alt="Logo" class="success-logo">
+        <h3>Account Created!</h3>
+        <p>Congratulations! Your account has been successfully created. You can now log in as a Student or Teacher, use your Passkey, or try Fast Login.</p>
+        <button class="success-ok-btn" onclick="closeSuccessModal()">Okay</button>
+    </div>
+</div>
+
+<div id="devPasskeyDim" class="dev-pk-dim"></div>
+<div id="devPasskeyModal" class="dev-pk" role="dialog" aria-modal="true" aria-labelledby="devPkTitle" aria-hidden="true">
+    <button type="button" class="dev-pk-close" id="devPkClose" aria-label="Close Developer Passkeys">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 3.5l17 17M20.5 3.5l-17 17" fill="none" stroke="#ff0000" stroke-width="4" stroke-linecap="round"/></svg>
+    </button>
+    <h3 class="dev-pk-title" id="devPkTitle">Developer Passkeys</h3>
+    <p class="dev-pk-sub" id="devPkSub">1 try only every 5 minutes.</p>
+    <input id="devPkInput" class="dev-pk-input" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" placeholder="Type your Developer Passkeys here...">
+    <button type="button" class="dev-pk-enter" id="devPkEnter">Enter</button>
+    <p class="dev-pk-error" id="devPkError" role="alert"></p>
+</div>
+
+<div id="usersListModal" class="info-modal">
+    <div class="modalContent users-list-content">
+        <div class="users-header">
+            <div class="users-stats">
+                <div class="users-online">
+                    <span id="usersOnlineCount">0</span><span class="online-dot"></span>
+                </div>
+                <div class="users-total">
+                    <svg viewBox="0 0 24 24"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85-.85-.37-1.79-.58-2.78-.58-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg>
+                    <span id="usersTotalCount">0</span>
+                </div>
+            </div>
+            <h2>Users List</h2>
+            <div class="users-actions">
+                <button id="closeUsersList" aria-label="Close User's List"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 3.5l17 17M20.5 3.5l-17 17" fill="none" stroke="#ff0000" stroke-width="4" stroke-linecap="round"/></svg></button>
+                <button type="button" id="usersSpecialsToggle" class="users-filter-btn" aria-label="Change user type" aria-haspopup="true" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="3.6" cy="6.5" r="1.5"/><circle cx="3.6" cy="12" r="1.5"/><circle cx="3.6" cy="17.5" r="1.5"/><rect x="7.5" y="5" width="14" height="3" rx="1.5"/><rect x="7.5" y="10.5" width="14" height="3" rx="1.5"/><rect x="7.5" y="16" width="14" height="3" rx="1.5"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="users-cards-wrap">
+            <div id="usersCards" class="users-cards"></div>
+<div id="usersSpecialsMenu" class="users-specials-menu" role="menu" aria-label="Change User">
+                <h3>Change User</h3>
+                <button type="button" role="menuitem" class="users-specials-item" data-cat="Teacher">Teacher</button>
+                <button type="button" role="menuitem" class="users-specials-item" data-cat="Student">Student</button>
+                <button type="button" role="menuitem" class="users-specials-item" data-cat="Handlers">Handlers</button>
+                <button type="button" role="menuitem" class="users-specials-item" data-cat="Developers">Developers</button>
+                <button type="button" role="menuitem" class="users-specials-item" data-cat="Test Account">Test Account</button>
+                <button type="button" role="menuitem" class="users-specials-item" data-cat="Super Account">Super Account</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="infoModal" class="info-modal">
+    <div class="modalContent">
+        <div class="modalHeader">
+            <h2>Information</h2>
+            <button id="closeModal" aria-label="Close Modal">&times;</button>
+        </div>
+        <div class="infoCardsContainer">
+            <div class="infoCard">
+                <h3>For Students</h3>
+                <p>Enjoy unique features made for students, including game features, 3D models, live banners, and more, all connected to our in-game experience for a fun and engaging way to learn.</p>
+            </div>
+            <div class="infoCard">
+                <h3>For Teacher</h3>
+                <p>Enjoy an aesthetic, advanced interface with powerful AI features, including multiple AI models and AI helpers that support your teaching, planning, and daily tasks.</p>
+            </div>
+            <div class="infoCard">
+                <h3>For Special User</h3>
+                <p>Exclusive to subscribers of our Royal Bundles: Super VIP, Pro, or Admin. Enjoy a unique interface with a magnificent profile UI, add your profile globally so anyone can see and add you, and see your profile anywhere, limited to this feature only.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="systemNoticeModal" class="info-modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2>System Notice</h2>
+      <button id="closeSystemNotice" aria-label="Close System Notice">&times;</button>
+    </div>
+    
+    <div class="infoCardsContainer notice-list">
+      <button class="notice-card-btn" onclick="openNoticeDetail('From The Developers')">
+        <span>From The Developers</span>
+        <span class="arrow">&gt;</span>
+      </button>
+      
+      <button class="notice-card-btn" onclick="openNoticeDetail('System Warning')">
+        <span>System Warning</span>
+        <span class="arrow">&gt;</span>
+      </button>
+      
+      <button class="notice-card-btn" onclick="openNoticeDetail('Account Termination')">
+        <span>Account Termination</span>
+        <span class="arrow">&gt;</span>
+      </button>
+      
+      <button class="notice-card-btn" onclick="openNoticeDetail('New Features')">
+        <span>New Features</span>
+        <span class="arrow">&gt;</span>
+      </button>
+
+      <button class="notice-card-btn" onclick="openNoticeDetail('Manual & Guidelines')">
+        <span>Manual & Guidelines</span>
+        <span class="arrow">&gt;</span>
+      </button>
+
+      <button class="notice-card-btn" onclick="openNoticeDetail('Partnership')">
+        <span>Partnership</span>
+        <span class="arrow">&gt;</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="noticeDetailModal" class="info-modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2 id="noticeDetailTitle">Detail</h2>
+      <button id="closeNoticeDetail" aria-label="Close Detail">&times;</button>
+    </div>
+    <div class="infoCardsContainer">
+      <div class="infoCard" id="noticeDetailCardWrapper">
+        <p id="noticeDetailText">Detailed information goes here...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="partnershipVideosModal" class="info-modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2>Partnership Videos</h2>
+      <button id="closePartnershipVideos" aria-label="Close Partnership Videos">&times;</button>
+    </div>
+    <div class="infoCardsContainer">
+      <div class="partnership-videos-wrapper">
+        <div class="partnership-video-item">
+          <span class="partnership-video-title">Powered by Super AI</span>
+          <video class="partnership-video" autoplay muted loop playsinline>
+            <source src="A1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="partnership-video-item">
+          <span class="partnership-video-title">Github [Server]</span>
+          <video class="partnership-video" autoplay muted loop playsinline>
+            <source src="A2.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="partnership-video-item">
+          <span class="partnership-video-title">Vercel [Host]</span>
+          <video class="partnership-video" autoplay muted loop playsinline>
+            <source src="A3.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="partnership-video-item">
+          <span class="partnership-video-title">Gemini 3</span>
+          <video class="partnership-video" autoplay muted loop playsinline>
+            <source src="A4.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="partnership-video-item">
+          <span class="partnership-video-title">Claude AI</span>
+          <video class="partnership-video" autoplay muted loop playsinline>
+            <source src="A5.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="partnership-video-item">
+          <span class="partnership-video-title">Firebase [Datebase]</span>
+          <video class="partnership-video" autoplay muted loop playsinline>
+            <source src="A6.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+      <div class="socialIconsContainer small-social-icons">
+        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        </a>
+        <a href="https://discord.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Discord">
+          <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.927 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        </a>
+        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="mediaLightbox" class="info-modal" style="align-items: center; justify-content: center; z-index: 9999;">
+  <button id="closeLightbox" aria-label="Close Lightbox">&times;</button>
+  <div class="modalContent">
+    <div id="lightboxContainer"></div>
+  </div>
+</div>
+
+<div id="manualPicturesModal" class="info-modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2>Manual & Guidelines</h2>
+      <button id="closeManualPictures" aria-label="Close Manual Pictures">&times;</button>
+    </div>
+    <div class="infoCardsContainer">
+      <div class="manual-pictures-wrapper">
+        <img class="manual-picture" src="C1.png" alt="">
+        <img class="manual-picture" src="C4.jpg" alt="">
+        <img class="manual-picture" src="C4.jpg" alt="">
+        <img class="manual-picture" src="C4.jpg" alt="">
+        <img class="manual-picture" src="C4.jpg" alt="">
+        <img class="manual-picture" src="C4.jpg" alt="">
+        <img class="manual-picture" src="C4.jpg" alt="">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="socialModal" class="info-modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2>Social Media's</h2>
+      <button id="closeSocialModal" aria-label="Close Social Media Modal">&times;</button>
+    </div>
+    <div class="socialIconsContainer">
+      <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Facebook">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12c0-5.523-4.477-10-10-10z"/></svg>
+      </a>
+      <a href="https://discord.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Discord">
+        <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.927 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+      </a>
+      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div id="otherAppsModal" class="info-modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2>Other Apps</h2>
+      <button id="closeOtherApps" aria-label="Close Other Apps">&times;</button>
+    </div>
+    <div class="infoCardsContainer" style="justify-content: center; align-items: center; text-align: center;">
+      <h2 style="font-size: 32px; font-weight: 600; color: #ffffff; margin: auto;">Coming Soon</h2>
+    </div>
+  </div>
+</div>
+
+<div id="featureModal" class="info-modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2 id="featureModalTitle">Feature</h2>
+      <button id="closeFeatureModal" aria-label="Close">&times;</button>
+    </div>
+    <div class="infoCardsContainer" style="justify-content: center; align-items: center; text-align: center;">
+      <h2 style="font-size: 32px; font-weight: 600; color: #ffffff; margin: auto;">Coming Soon</h2>
+    </div>
+  </div>
+</div>
+
+<section class="fl-panel" id="flPanel" aria-hidden="true" aria-label="Fast Login">
+    <header class="fl-header">
+        <button class="fl-reload" id="flReload" onclick="reloadFastLogin()" aria-label="Reload users">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" stroke="#fff" stroke-width=".9" stroke-linejoin="round" d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>
+        </button>
+        <h3 class="fl-title">Fast Login</h3>
+        <button class="fl-close" onclick="closeFastLogin()" aria-label="Close Fast Login">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M21 3L3 21" fill="none" stroke="#ff0000" stroke-width="3.6" stroke-linecap="butt"/></svg>
+        </button>
+    </header>
+    <div class="fl-list" id="flList"></div>
+    <div class="fl-loading-text" id="flLoadingText" aria-live="polite">Loading users...</div>
+</section>
+
+<div class="fl-dim" id="flDim" onclick="closeIdentity()"></div>
+<div class="fl-id" id="flId" role="dialog" aria-modal="true" aria-label="User Identity" aria-hidden="true">
+    <h3 class="fl-id-title">User Identity</h3>
+    <button class="fl-id-close" onclick="closeIdentity()" aria-label="Close User Identity">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M21 3L3 21" fill="none" stroke="#ff0000" stroke-width="3.6" stroke-linecap="butt"/></svg>
+    </button>
+    <div class="fl-id-field" id="flIdField">
+        <input id="flIdInput" type="password" enterkeyhint="go" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your LRN or Contact No. here...">
+        <button class="fl-id-eye" id="flIdEye" onclick="toggleIdentityEye()" aria-label="Show or hide">
+            <svg class="eye-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M1.8 12C3.4 8.4 7.3 5.6 12 5.6s8.6 2.8 10.2 6.4C20.6 15.6 16.7 18.4 12 18.4S3.4 15.6 1.8 12z" fill="none" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3.6" fill="none" stroke="#000" stroke-width="2.4"/>
+                <circle cx="12" cy="12" r="1.3" fill="#000"/>
+                <path class="eye-slash eye-slash-cut" d="M3.5 3.5l17 17" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+                <path class="eye-slash" d="M3.5 3.5l17 17" stroke="#000" stroke-width="2.4" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </div>
+    <button class="fl-id-enter" id="flIdEnter" onclick="submitIdentity()">Enter</button>
+    <p class="fl-id-error" id="flIdError" role="alert"></p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="accounts-db.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
