@@ -14,7 +14,7 @@
 
     <div class="search-row">
     <form class="search-bar" id="searchForm" role="search" onsubmit="return false">
-      <input id="searchInput" type="search" placeholder="Search a student or features..." autocomplete="off" aria-label="Search a student or features">
+      <input id="searchInput" type="search" placeholder="Search a personnel or features..." autocomplete="off" aria-label="Search a personnel or features">
       <button class="search-btn" type="submit" aria-label="Search">
         <span class="ico" data-icon="icon-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
         <span class="x-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
@@ -32,7 +32,7 @@
           </button>
         </div>
       </div>
-      <ul class="recent-list student-list" id="studentList" aria-label="Student results" hidden></ul>
+      <ul class="recent-list student-list" id="studentList" aria-label="Personnel results" hidden></ul>
       <div class="recent-suggest-head recent-sub" id="recentSub" hidden><h2>Recent</h2></div>
       <ul class="recent-list" id="recentList"></ul>
       <div class="recent-empty" id="recentEmpty" hidden>No recent searches yet</div>
@@ -55,6 +55,9 @@
         <li class="recent-item suggestion placeholder" style="--e:7"><span class="ico" data-icon="icon-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><div class="recent-line"><span class="recent-text">No suggestions yet</span></div></li>
         <li class="recent-item suggestion placeholder" style="--e:7"><span class="ico" data-icon="icon-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><div class="recent-line"><span class="recent-text">No suggestions yet</span></div></li>
       </ul>
+      <div class="recent-more suggest-more">
+        <button type="button" id="suggestMoreBtn" aria-expanded="false" hidden><span id="suggestMoreLabel">Show More</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
       </div>
     </section>
 
@@ -82,8 +85,8 @@
     <div class="feature-list" id="featureList"></div>
 
     <div class="sec-head link-head">
-      <h2>Promotion Video's</h2>
-      <a class="head-link" href="promotion-videos.html" aria-label="Open Promotion Video's">
+      <h2>Promotion Videos</h2>
+      <a class="head-link" href="promotion-videos.html" aria-label="Open Promotion Videos">
         <span class="ico" data-icon="icon-arrow"><svg viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19"/></svg></span>
       </a>
     </div>
@@ -92,8 +95,8 @@
     </div>
 
     <div class="sec-head link-head">
-      <h2>Partnership's</h2>
-      <a class="head-link" href="partnerships.html" aria-label="Open Partnership's">
+      <h2>Partnerships</h2>
+      <a class="head-link" href="partnerships.html" aria-label="Open Partnerships">
         <span class="ico" data-icon="icon-arrow"><svg viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19"/></svg></span>
       </a>
     </div>
@@ -134,33 +137,61 @@
   <aside class="quick-menu" id="quickMenu" aria-hidden="true" aria-label="Quick Menu">
     <h2>Quick Menu</h2>
     <nav class="qm-list">
-      <a href="records.html" class="qm-item"><span>Records</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
-      <a href="groups.html" class="qm-item"><span>Groups</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
-      <a href="saved.html" class="qm-item"><span>Saved</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
-      <a href="archived.html" class="qm-item"><span>Archived</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
-      <a href="database.html" class="qm-item"><span>Database</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
-      <a href="see-all.html" class="qm-item"><span>See All</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
-      <a href="settings.html" class="qm-item"><span>Settings</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
+      <a href="records.html" class="qm-item"><span class="qm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 3H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4"/><path d="M13 3l5 5v2"/><path d="M13 3v5h5"/><path d="M8.5 12h6M8.5 15.5h3"/><path d="M15 15l5 5M20 15l-5 5"/></svg></span><span class="qm-label">Records</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
+      <a href="groups.html" class="qm-item"><span class="qm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="9.2" r="2.1" fill="currentColor" stroke="none"/><circle cx="8.3" cy="10.6" r="1.6" fill="currentColor" stroke="none"/><circle cx="15.7" cy="10.6" r="1.6" fill="currentColor" stroke="none"/><path d="M7.2 17c0-2.2 2.2-3.6 4.8-3.6s4.8 1.4 4.8 3.6z" fill="currentColor" stroke="none"/></svg></span><span class="qm-label">Groups</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
+      <a href="saved.html" class="qm-item"><span class="qm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 3H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4"/><path d="M13 3l5 5v2"/><path d="M13 3v5h5"/><path d="M8.5 12h6M8.5 15.5h3"/><polyline points="14.5 17.5 17 20 21.5 15"/></svg></span><span class="qm-label">Saved</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
+      <a href="archived.html" class="qm-item"><span class="qm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="4" rx="0.5"/><path d="M5.5 7v13h13V7"/><path d="M10 11.5h4"/></svg></span><span class="qm-label">Archived</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
+      <a href="database.html" class="qm-item"><span class="qm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span><span class="qm-label">Database</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
+      <a href="see-all.html" class="qm-item"><span class="qm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="4" cy="6" r="1.7" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1.7" fill="currentColor" stroke="none"/><path d="M9 6h12M9 12h12M9 18h12"/></svg></span><span class="qm-label">See All</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
+      <a href="settings.html" class="qm-item"><span class="qm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1z"/></svg></span><span class="qm-label">Settings</span><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></a>
     </nav>
+    <div class="qm-user" id="qmUser" aria-label="Signed-in account">
+      <div class="qm-banner" id="qmBanner"></div>
+      <div class="qm-av-wrap"><div class="qm-avatar" id="qmAvatar"></div><i class="qm-on-dot" id="qmDot" hidden title="Online"></i></div>
+      <p class="qm-uname" id="qmUserName">Guest</p>
+      <p class="qm-utype" id="qmUserType">Not signed in</p>
+      <div class="qm-viewed" id="qmViewed" hidden>
+        <span class="qm-viewed-label">Viewed</span>
+        <div class="qm-viewed-list" id="qmViewedList"></div>
+      </div>
+    </div>
   </aside>
 
 <div class="stu-overlay" id="stuOverlay" hidden>
-    <div class="stu-modal" id="stuModal" role="dialog" aria-modal="true" aria-labelledby="stuName">
-      <button class="stu-close" id="stuClose" type="button" aria-label="Close">
-        <svg viewBox="0 0 24 24"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
-      </button>
-      <div class="stu-inner">
-        <h2 class="stu-no stu-anim" id="stuNo" style="--d:0">No. 1</h2>
-        <div class="stu-rule" style="--d:1"></div>
-        <p class="stu-tag stu-anim" style="--d:2">Student</p>
-        <p class="stu-name stu-anim" id="stuName" style="--d:3"></p>
-        <p class="stu-role stu-anim" id="stuRole" style="--d:4"></p>
-        <div class="stu-rule stu-rule-2" style="--d:5"></div>
-        <p class="stu-beta stu-anim" style="--d:6">This feature is for beta test only</p>
+    <div class="pc-modal" id="stuModal" role="dialog" aria-modal="true" aria-labelledby="pcName">
+      <div class="pc-banner" id="pcBanner">
+        <button class="stu-close" id="stuClose" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+        </button>
       </div>
+      <div class="pc-id">
+        <div class="pc-avatar">
+          <div class="pc-pic" id="pcPic"></div>
+          <span class="pc-dot" id="pcDot" hidden title="Online"></span>
+        </div>
+        <div class="pc-names">
+          <p class="pc-name" id="pcName">User Name</p>
+          <p class="pc-type" id="pcType">Acc Type</p>
+        </div>
+        <div class="pc-quick">
+          <button type="button" class="pc-q" data-act="digitalid"><span class="pc-q-ico" data-icon="icon-digitalid"><svg viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><circle cx="8.5" cy="10.5" r="2.2"/><path d="M4.8 16.5c.5-2 2-3 3.7-3s3.2 1 3.7 3"/><path d="M14 9.5h5M14 12.5h5M14 15.5h3.5"/></svg></span><span>Digital ID</span></button>
+          <button type="button" class="pc-q" data-act="gift"><span class="pc-q-ico" data-icon="icon-gift"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V12M12 8v13.5"/><path d="M12 8C10 3.5 6 4 7 6.2c.7 1.6 3.6 1.8 5 1.8zM12 8c2-4.5 6-4 5-1.8-.7 1.6-3.6 1.8-5 1.8z"/></svg></span><span>Gift</span></button>
+        </div>
+      </div>
+      <div class="pc-panel"><button type="button" class="pc-act" data-act="special"><span class="pc-act-ico" data-icon="icon-special"><svg viewBox="0 0 24 24"><path d="M12 2.5l8 2.6v6.2c0 5-3.4 8.6-8 10.2-4.6-1.6-8-5.2-8-10.2V5.1z" fill="currentColor"/></svg></span><span class="pc-act-label">Special User</span></button><button type="button" class="pc-act" data-act="highlights"><span class="pc-act-ico" data-icon="icon-highlights"><svg viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="17" rx="2.5"/><circle cx="8.6" cy="9" r="1.8" fill="currentColor" stroke="none"/><path d="M3.9 19.6l5.2-6 3.8 4.1 2.6-2.7 4.6 4.6z" fill="currentColor" stroke="none"/></svg></span><span class="pc-act-label">Featured Highlights</span></button><button type="button" class="pc-act" data-act="chatters"><span class="pc-act-ico" data-icon="icon-chatters"><svg viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-7l-4 3.5V17H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><circle cx="8.3" cy="10.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="10.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="15.7" cy="10.5" r="1.3" fill="currentColor" stroke="none"/></svg></span><span class="pc-act-label">Chatters</span></button><button type="button" class="pc-act" data-act="music"><span class="pc-act-ico" data-icon="icon-music"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="7.5" fill="none" stroke="#555" stroke-width=".7"/><circle cx="12" cy="12" r="4" fill="#bdbdbd" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="#ffd700" stroke="none"/></svg></span><span class="pc-act-label">Music</span></button></div>
+      <div class="pc-panel"><button type="button" class="pc-act" data-act="addfriend"><span class="pc-act-ico" data-icon="icon-addfriend"><svg viewBox="0 0 24 24"><circle cx="9.5" cy="7.8" r="3.8"/><path d="M2.5 20.5v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1z"/><path d="M19 6.5v6M16 9.5h6"/></svg></span><span class="pc-act-label">Add Friend</span></button><button type="button" class="pc-act" data-act="facebook"><span class="pc-act-ico fb-black" data-icon="icon-facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg></span><span class="pc-act-label">Facebook</span></button><button type="button" class="pc-act" data-act="rexo"><span class="pc-act-ico" data-icon="icon-rexo"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3.5"/><text x="12" y="15.6" text-anchor="middle" font-size="9.5" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,Helvetica,sans-serif">3D</text></svg></span><span class="pc-act-label">Rexo Model</span></button><button type="button" class="pc-act" data-act="achievements"><span class="pc-act-ico" data-icon="icon-achievements"><svg viewBox="0 0 24 24"><path d="M7 14.5V22l5-2.4 5 2.4v-7.5z" fill="currentColor" stroke="none"/><circle cx="12" cy="9" r="7.6" fill="currentColor" stroke="none"/><circle cx="12" cy="9" r="6" fill="none" stroke="#ffd700" stroke-width=".9"/><path d="M12 4.6l1.4 2.9 3.2.4-2.3 2.2.6 3.1-2.9-1.5-2.9 1.5.6-3.1-2.3-2.2 3.2-.4z" fill="#ffd700" stroke="none"/></svg></span><span class="pc-act-label">Achievements</span></button></div>
+      <div class="pc-viewed" id="pcViewed" hidden>
+        <span class="pc-viewed-label">Viewed</span>
+        <div class="pc-viewed-list" id="pcViewedList"></div>
+      </div>
+      <p class="pc-toast" id="pcToast" role="status" aria-live="polite"></p>
     </div>
   </div>
 
+<!-- Firebase (same account database as the other pages) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="accounts-db.js"></script>
 <script src="script.js"></script>
 
 </body>
