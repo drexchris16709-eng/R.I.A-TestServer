@@ -216,6 +216,22 @@ function updateAccountBanner(userId, dataUrl) {
   });
 }
 
+// Delete the profile photo: the fields are REMOVED from accounts/<User ID> in Firebase (not just emptied).
+function deleteAccountPhoto(userId) {
+  return accountsRef.doc(String(userId).toUpperCase()).update({
+    profilePhoto: firebase.firestore.FieldValue.delete(),
+    photoUpdatedAt: firebase.firestore.FieldValue.delete()
+  });
+}
+
+// Delete the banner: the fields are REMOVED from accounts/<User ID> in Firebase (not just emptied).
+function deleteAccountBanner(userId) {
+  return accountsRef.doc(String(userId).toUpperCase()).update({
+    bannerPhoto: firebase.firestore.FieldValue.delete(),
+    bannerUpdatedAt: firebase.firestore.FieldValue.delete()
+  });
+}
+
 
 /* =========================================================
    LOGIN SESSION (saved in the browser, checked against Firebase)
