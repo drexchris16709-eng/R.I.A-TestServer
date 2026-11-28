@@ -2654,10 +2654,9 @@ body.sk-reveal :is(
   width: 100%;
   aspect-ratio: 2.28 / 1;
   border-radius: calc(var(--w) * .047);
-  overflow: hidden;
   background: linear-gradient(135deg, #2a2a2a, #111);
 }
-.pf-banner-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.pf-banner-img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
 .pf-banner-img[hidden] { display: none; }
 
 .pf-plus {
@@ -2784,3 +2783,111 @@ body.sk-reveal :is(
 @media (prefers-reduced-motion: reduce) {
   .pf-overlay.pf-in, .pf-overlay.pf-in > *, .pf-overlay.pf-out, .pf-overlay.pf-out > * { animation: none; }
 }
+
+/* ----- Banner cropper ----- */
+.crop-box {
+  box-sizing: border-box;
+  width: min(92vw, 460px);
+  padding: 24px 18px 22px;
+  border-radius: 36px;
+  background: #000; color: #fff;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+.crop-title { margin: 0 0 14px; font-size: 1.25rem; }
+.crop-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 720 / 300;             /* same shape as the saved banner */
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1.5px solid #3a3a3a;
+  background: #111;
+  cursor: grab;
+  touch-action: none;
+  user-select: none; -webkit-user-select: none;
+}
+.crop-frame:active { cursor: grabbing; }
+.crop-frame img {
+  position: absolute; left: 0; top: 0;
+  max-width: none; max-height: none;
+  pointer-events: none; -webkit-user-drag: none;
+  will-change: transform;
+}
+/* thirds grid, to help with framing */
+.crop-frame::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(to right, transparent calc(33.333% - .5px), rgba(255,255,255,.35) calc(33.333% - .5px), rgba(255,255,255,.35) calc(33.333% + .5px), transparent calc(33.333% + .5px), transparent calc(66.666% - .5px), rgba(255,255,255,.35) calc(66.666% - .5px), rgba(255,255,255,.35) calc(66.666% + .5px), transparent calc(66.666% + .5px)),
+    linear-gradient(to bottom, transparent calc(33.333% - .5px), rgba(255,255,255,.35) calc(33.333% - .5px), rgba(255,255,255,.35) calc(33.333% + .5px), transparent calc(33.333% + .5px), transparent calc(66.666% - .5px), rgba(255,255,255,.35) calc(66.666% - .5px), rgba(255,255,255,.35) calc(66.666% + .5px), transparent calc(66.666% + .5px));
+}
+.crop-hint { margin: 12px 0 0; font-size: 13px; color: #8a8a8a; }
+.crop-zoom { display: flex; align-items: center; gap: 12px; margin: 14px 6px 0; }
+.crop-zoom svg { flex: none; width: 20px; height: 20px; color: #8a8a8a; }
+.crop-zoom input[type="range"] { flex: 1; min-width: 0; accent-color: #fff; cursor: pointer; }
+.crop-actions { display: flex; gap: 12px; margin-top: 20px; }
+.crop-btn {
+  flex: 1; padding: 14px;
+  border: 1.5px solid #3a3a3a; border-radius: 22px;
+  background: #000; color: #fff;
+  font: inherit; font-size: 18px; cursor: pointer;
+}
+.crop-btn.crop-save { background: #fff; color: #000; border-color: #fff; }
+.crop-btn:active { transform: scale(0.97); }
+.crop-btn:focus-visible { outline: 2px solid #1fe51f; outline-offset: 3px; }
+
+/* Profile-photo mode of the cropper: round, square frame */
+.crop-box.is-photo .crop-frame {
+  width: min(100%, 300px);
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+}
+.crop-box.is-photo .crop-frame::after { display: none; }   /* no thirds grid on the circle */
+
+/* ----- Three-dot menu on the banner (glass button + Delete Banner / Delete Profile) ----- */
+.pf-menu-wrap {
+  position: absolute; top: 8%; left: 2.5%; z-index: 6;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+}
+.pf-dots {
+  --d: max(30px, calc(var(--w) * .07));
+  width: var(--d); height: calc(var(--d) * 1.45);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: calc(var(--d) * .13);
+  padding: 0; border-radius: calc(var(--d) * .26); cursor: pointer;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5); backdrop-filter: blur(12px) saturate(1.5);   /* glass */
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .2s ease, transform .12s ease, background .2s ease;
+}
+.pf-dots span { width: calc(var(--d) * .2); height: calc(var(--d) * .2); border-radius: 50%; background: #fff; }
+.pf-dots:active { transform: scale(0.94); }
+.pf-dots:focus-visible { outline: 2px solid #1fe51f; outline-offset: 2px; }
+
+.pf-menu { display: flex; flex-direction: column; gap: 8px; margin-left: 6px; animation: pfMenuIn .16s ease; }
+.pf-menu[hidden] { display: none; }
+.pf-menu-item {
+  padding: 9px 16px; border: 0; border-radius: 14px;
+  background: #fff; color: #000;
+  font: inherit; font-size: max(12px, calc(var(--w) * .03)); white-space: nowrap;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.pf-menu-item:active { transform: scale(0.96); }
+.pf-menu-item:focus-visible { outline: 2px solid #1fe51f; outline-offset: 2px; }
+.pf-menu-item:disabled { opacity: .45; cursor: default; transform: none; }
+@keyframes pfMenuIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* while the menu is open, everything else in the profile is dimmed and ignores taps */
+.pf-banner-img, .pf-plus, .pf-me, .pf-note, .pf-infos, .pf-pill, .pf-up { transition: opacity .2s ease; }
+.pf-modal.pf-menu-open .pf-banner-img,
+.pf-modal.pf-menu-open .pf-plus,
+.pf-modal.pf-menu-open .pf-me,
+.pf-modal.pf-menu-open .pf-note,
+.pf-modal.pf-menu-open .pf-infos,
+.pf-modal.pf-menu-open .pf-pill,
+.pf-modal.pf-menu-open .pf-up { opacity: .3; pointer-events: none; }
+.pf-modal.pf-menu-open .pf-dots { opacity: .5; }
+@media (prefers-reduced-motion: reduce) { .pf-menu { animation: none; } }
