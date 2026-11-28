@@ -1249,6 +1249,8 @@ overlay.addEventListener('touchmove', e=>e.preventDefault(), {passive:false});
     const b = $('pfBanner'), bs = safePhoto(account.bannerPhoto);
     if (bs) b.src = bs; else b.removeAttribute('src');
     b.hidden = !bs;
+    $('pfDelBanner').disabled = !bs;                              // nothing to delete -> greyed out
+    $('pfDelPhoto').disabled = !safePhoto(account.profilePhoto);
 
     $('pfUserId').textContent = show(account.userId || uid);
     $('pfDate').textContent = show(account.date);
@@ -1298,14 +1300,14 @@ overlay.addEventListener('touchmove', e=>e.preventDefault(), {passive:false});
   }
 
   function openProfile() { note(''); paint(); open(profileModal); $('pfClose').focus({ preventScroll: true }); }
-  function closeProfile() { close(profileModal); trigger.focus({ preventScroll: true }); }
+  function closeProfile() { setMenu(false); close(profileModal); trigger.focus({ preventScroll: true }); }
 
   trigger.addEventListener('click', openProfile);
   trigger.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProfile(); } });
   $('pfClose').addEventListener('click', closeProfile);   // the arrow closes the profile
 
   // tapping the dark area outside a modal closes it
-  profileModal.addEventListener('click', e => { if (e.target === profileModal) closeProfile(); });
+  profileModal.addEventListener('click', e => { if (e.target === profileModal) { if (menuOpen()) setMenu(false); else closeProfile(); } });
   nameModal.addEventListener('click', e => { if (e.target === nameModal) close(nameModal); });
   passModal.addEventListener('click', e => { if (e.target === passModal) close(passModal); });
 
@@ -1376,55 +1378,174 @@ overlay.addEventListener('touchmove', e=>e.preventDefault(), {passive:false});
   });
 
   // ---------- Profile photo / banner (+ buttons) ----------
-  // Center-crop to a small JPEG so it fits in a Firestore document.
-  function cropToJpeg(file, W, H, quality) {
-    return new Promise((resolve, reject) => {
-      const url = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = () => {
-        const ratio = W / H;
-        let sw = img.naturalWidth, sh = sw / ratio;
-        if (sh > img.naturalHeight) { sh = img.naturalHeight; sw = sh * ratio; }
-        const c = document.createElement('canvas'); c.width = W; c.height = H;
-        c.getContext('2d').drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh) / 2, sw, sh, 0, 0, W, H);
-        URL.revokeObjectURL(url);
-        resolve(c.toDataURL('image/jpeg', quality));
-      };
-      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Unreadable image')); };
-      img.src = url;
-    });
+  // ---------- Cropper (banner + profile photo): the user moves / zooms the picture to choose what shows ----------
+  const cropModal = $('cropModal'), cropFrame = $('cropFrame'), cropImg = $('cropImg'), cropZoom = $('cropZoom');
+  const cropBox = $('cropBox');
+  // one cropper, two modes: the banner is wide, the profile photo is a round (square-saved) picture
+  const CROP_MODES = {
+    banner: { w: 720, h: 300, q: 0.85, title: 'Crop your banner',        saving: 'Changing banner...',  done: 'Banner saved.', save: (id, url) => updateAccountBanner(id, url) },
+    photo:  { w: 256, h: 256, q: 0.82, title: 'Crop your profile photo', saving: 'Changing profile...', done: 'Photo saved.',  save: (id, url) => updateAccountPhoto(id, url) }
+  };
+  let cropMode = 'banner';
+  const crop = { url: '', iw: 0, ih: 0, cx: 0, cy: 0, zoom: 1, fw: 0, fh: 0 };   // cx, cy = image point shown at the frame centre
+
+  const cropScale = () => Math.max(crop.fw / crop.iw, crop.fh / crop.ih) * crop.zoom;   // image px -> frame px
+
+  function cropClamp() {
+    const s = cropScale(), halfW = crop.fw / s / 2, halfH = crop.fh / s / 2;
+    crop.cx = Math.min(crop.iw - halfW, Math.max(halfW, crop.cx));
+    crop.cy = Math.min(crop.ih - halfH, Math.max(halfH, crop.cy));
+  }
+  function cropRender() {
+    cropClamp();
+    const s = cropScale();
+    cropImg.style.width = (crop.iw * s) + 'px';
+    cropImg.style.height = (crop.ih * s) + 'px';
+    cropImg.style.transform = 'translate(' + (crop.fw / 2 - crop.cx * s) + 'px,' + (crop.fh / 2 - crop.cy * s) + 'px)';
+    cropZoom.value = crop.zoom;
+  }
+  function cropSetZoom(z) { crop.zoom = Math.min(4, Math.max(1, z)); cropRender(); }
+
+  function cropEnd() {
+    close(cropModal);
+    cropBox.classList.remove('is-photo');
+    cropImg.removeAttribute('src');
+    if (crop.url) { URL.revokeObjectURL(crop.url); crop.url = ''; }
   }
 
-  function wirePicker(btnId, inputId, field, W, H, q, label, doneMsg) {
+  function cropStart(file, mode) {
+    cropMode = CROP_MODES[mode] ? mode : 'banner';
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      if (crop.url) URL.revokeObjectURL(crop.url);
+      crop.url = url; crop.iw = img.naturalWidth; crop.ih = img.naturalHeight;
+      crop.cx = crop.iw / 2; crop.cy = crop.ih / 2; crop.zoom = 1;
+      cropImg.src = url;
+      $('cropTitle').textContent = CROP_MODES[cropMode].title;
+      cropBox.classList.toggle('is-photo', cropMode === 'photo');
+      open(cropModal);
+      crop.fw = cropFrame.offsetWidth; crop.fh = cropFrame.offsetHeight;   // layout size (not affected by the pop-in animation)
+      cropRender();
+      $('cropSave').focus({ preventScroll: true });
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); note('Could not read that image. Try a different one.', true); };
+    img.src = url;
+  }
+
+  // drag to move; two fingers to pinch-zoom; wheel / slider to zoom
+  const ptrs = new Map();
+  let pinchDist = 0;
+  cropFrame.addEventListener('pointerdown', e => {
+    cropFrame.setPointerCapture(e.pointerId);
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinchDist = Math.hypot(a.x - b.x, a.y - b.y); }
+  });
+  cropFrame.addEventListener('pointermove', e => {
+    const p = ptrs.get(e.pointerId);
+    if (!p || !crop.iw) return;
+    const nx = e.clientX, ny = e.clientY;
+    if (ptrs.size === 1) {
+      const s = cropScale();
+      crop.cx -= (nx - p.x) / s; crop.cy -= (ny - p.y) / s;
+      p.x = nx; p.y = ny;
+      cropRender();
+    } else if (ptrs.size === 2) {
+      p.x = nx; p.y = ny;
+      const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (pinchDist) cropSetZoom(crop.zoom * d / pinchDist);
+      pinchDist = d;
+    }
+  });
+  const cropPtrUp = e => { ptrs.delete(e.pointerId); pinchDist = 0; };
+  cropFrame.addEventListener('pointerup', cropPtrUp);
+  cropFrame.addEventListener('pointercancel', cropPtrUp);
+  cropFrame.addEventListener('wheel', e => { e.preventDefault(); cropSetZoom(crop.zoom * (e.deltaY < 0 ? 1.08 : 1 / 1.08)); }, { passive: false });
+  cropZoom.addEventListener('input', () => cropSetZoom(parseFloat(cropZoom.value)));
+  window.addEventListener('resize', () => {
+    if (!isOpen(cropModal)) return;
+    crop.fw = cropFrame.offsetWidth; crop.fh = cropFrame.offsetHeight; cropRender();
+  });
+
+  $('cropCancel').addEventListener('click', cropEnd);
+  cropModal.addEventListener('click', e => { if (e.target === cropModal) cropEnd(); });
+
+  $('cropSave').addEventListener('click', async () => {
+    if (!crop.url || !uid) return;
+    const m = CROP_MODES[cropMode];
+    const s = cropScale(), sw = crop.fw / s, sh = crop.fh / s;
+    const c = document.createElement('canvas'); c.width = m.w; c.height = m.h;
+    const g = c.getContext('2d');
+    g.fillStyle = '#000'; g.fillRect(0, 0, m.w, m.h);
+    g.imageSmoothingQuality = 'high';
+    g.drawImage(cropImg, crop.cx - sw / 2, crop.cy - sh / 2, sw, sh, 0, 0, m.w, m.h);
+    const dataUrl = c.toDataURL('image/jpeg', m.q);
+    cropEnd();
+    $('pfSavingText').textContent = m.saving; open(saving);
+    const started = Date.now();
+    try {
+      await m.save(uid, dataUrl);
+      await new Promise(r => setTimeout(r, Math.max(0, 700 - (Date.now() - started))));
+      note(m.done);
+    } catch (ex) {
+      console.error(ex);
+      note('Could not save the image. Try a different one.', true);
+    } finally { close(saving); }
+  });
+
+  // + on the banner / profile photo: choose a picture, then crop it
+  function wireCropPicker(btnId, inputId, mode) {
     $(btnId).addEventListener('click', () => {
       if (needLogin()) return;
       $(inputId).value = ''; $(inputId).click();
     });
-    $(inputId).addEventListener('change', async () => {
+    $(inputId).addEventListener('change', () => {
       const file = $(inputId).files && $(inputId).files[0];
       if (!file) return;
       if (!file.type.startsWith('image/')) return note('Choose an image file.', true);
       note('');
-      $('pfSavingText').textContent = label; open(saving);
-      const started = Date.now();
-      try {
-        const dataUrl = await cropToJpeg(file, W, H, q);
-        await (field === 'profilePhoto' ? updateAccountPhoto(uid, dataUrl) : updateAccountBanner(uid, dataUrl));
-        await new Promise(r => setTimeout(r, Math.max(0, 700 - (Date.now() - started))));
-        note(doneMsg);
-      } catch (ex) {
-        console.error(ex);
-        note('Could not save the image. Try a different one.', true);
-      } finally { close(saving); }
+      cropStart(file, mode);
     });
   }
-  wirePicker('pfPhotoBtn', 'pfPhotoInput', 'profilePhoto', 256, 256, 0.82, 'Changing profile...', 'Photo saved.');
-  wirePicker('pfBannerBtn', 'pfBannerInput', 'bannerPhoto', 720, 300, 0.8, 'Changing banner...', 'Banner saved.');
+  wireCropPicker('pfBannerBtn', 'pfBannerInput', 'banner');
+  wireCropPicker('pfPhotoBtn',  'pfPhotoInput',  'photo');
+
+  // ---------- Three-dot menu: Delete Banner / Delete Profile ----------
+  const pfBox = profileModal.querySelector('.pf-modal'), menuBtn = $('pfMenuBtn'), menu = $('pfMenu');
+  function menuOpen() { return !menu.hidden; }
+  function setMenu(on) {
+    menu.hidden = !on;
+    pfBox.classList.toggle('pf-menu-open', on);       // dims the rest of the profile (see style.css)
+    menuBtn.setAttribute('aria-expanded', on ? 'true' : 'false');
+  }
+  menuBtn.addEventListener('click', e => { e.stopPropagation(); setMenu(!menuOpen()); });
+  // tapping anywhere else inside the profile just closes the menu
+  pfBox.addEventListener('click', e => { if (menuOpen() && !menu.contains(e.target) && !menuBtn.contains(e.target)) setMenu(false); });
+
+  async function deleteImage(field, savingText, doneMsg) {
+    setMenu(false);
+    if (needLogin()) return;
+    note('');
+    try {
+      await withSaving(savingText, async () => {
+        // removes the fields from the account in Firebase (see accounts-db.js); the page then falls back to the default picture
+        await (field === 'bannerPhoto' ? deleteAccountBanner(uid) : deleteAccountPhoto(uid));
+      });
+      note(doneMsg);
+    } catch (ex) {
+      console.error(ex);
+      note('Could not delete the image. Try again.', true);
+    }
+  }
+  $('pfDelBanner').addEventListener('click', () => deleteImage('bannerPhoto', 'Deleting banner...', 'Banner deleted.'));
+  $('pfDelPhoto').addEventListener('click', () => deleteImage('profilePhoto', 'Deleting profile...', 'Photo deleted.'));
 
   // Escape closes the top-most profile modal first
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
-    if (isOpen(passModal)) close(passModal);
+    if (isOpen(cropModal)) cropEnd();
+    else if (menuOpen()) setMenu(false);
+    else if (isOpen(passModal)) close(passModal);
     else if (isOpen(nameModal)) close(nameModal);
     else if (isOpen(profileModal)) closeProfile();
   });
