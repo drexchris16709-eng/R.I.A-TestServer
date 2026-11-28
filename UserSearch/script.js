@@ -11,18 +11,18 @@
   ];
 
   const FEATURES = [
-    { img: 'CM', g: grad('#050505', '#2b2b2b'), badge: 'Logo.jpg', title: 'Upcoming Feature 1' },
-    { img: 'CM', g: grad('#020b1c', '#0c4a8a'), badge: 'Logo.jpg', title: 'Upcoming Feature 2' },
-    { img: 'CM', g: grad('#130a2b', '#5b2bb5'), badge: 'Logo.jpg', title: 'Upcoming Feature 3' },
-    { img: 'CM', g: grad('#0a2020', '#14867a'), badge: 'Logo.jpg', title: 'Upcoming Feature 4' },
-    { img: 'CM', g: grad('#2a0a1c', '#b32a6a'), badge: 'Logo.jpg', title: 'Upcoming Feature 5' },
-    { img: 'CM', g: grad('#2a1b05', '#c28a1a'), badge: 'Logo.jpg', title: 'Upcoming Feature 6' },
-    { img: 'CM', g: grad('#071a2a', '#1b7fb3'), badge: 'Logo.jpg', title: 'Upcoming Feature 7' },
-    { img: 'CM', g: grad('#190a2a', '#7a2bd0'), badge: 'Logo.jpg', title: 'Upcoming Feature 8' },
-    { img: 'CM', g: grad('#0a1a0f', '#2f9e55'), badge: 'Logo.jpg', title: 'Upcoming Feature 9' },
-    { img: 'CM', g: grad('#2a0a0a', '#c23a3a'), badge: 'Logo.jpg', title: 'Upcoming Feature 10' },
-    { img: 'CM', g: grad('#0a1030', '#3a6ad6'), badge: 'Logo.jpg', title: 'Upcoming Feature 11' },
-    { img: 'CM', g: grad('#1a1a0a', '#b8b02a'), badge: 'Logo.jpg', title: 'Upcoming Feature 12' }
+    { img: 'CM', g: grad('#050505', '#2b2b2b'), title: 'Upcoming Feature 1' },
+    { img: 'CM', g: grad('#020b1c', '#0c4a8a'), title: 'Upcoming Feature 2' },
+    { img: 'CM', g: grad('#130a2b', '#5b2bb5'), title: 'Upcoming Feature 3' },
+    { img: 'CM', g: grad('#0a2020', '#14867a'), title: 'Upcoming Feature 4' },
+    { img: 'CM', g: grad('#2a0a1c', '#b32a6a'), title: 'Upcoming Feature 5' },
+    { img: 'CM', g: grad('#2a1b05', '#c28a1a'), title: 'Upcoming Feature 6' },
+    { img: 'CM', g: grad('#071a2a', '#1b7fb3'), title: 'Upcoming Feature 7' },
+    { img: 'CM', g: grad('#190a2a', '#7a2bd0'), title: 'Upcoming Feature 8' },
+    { img: 'CM', g: grad('#0a1a0f', '#2f9e55'), title: 'Upcoming Feature 9' },
+    { img: 'CM', g: grad('#2a0a0a', '#c23a3a'), title: 'Upcoming Feature 10' },
+    { img: 'CM', g: grad('#0a1030', '#3a6ad6'), title: 'Upcoming Feature 11' },
+    { img: 'CM', g: grad('#1a1a0a', '#b8b02a'), title: 'Upcoming Feature 12' }
   ];
 
   const PROMOS = [
@@ -47,6 +47,41 @@
 
   const SLIDE_MS = 4000; // indicator / slide auto-advance: every 4 seconds
   const $ = (id) => document.getElementById(id);
+
+  /* ---------- "This feature is not available" popup (same as the main page) ---------- */
+  let unavailableToast = null, unavailableDim = null, unavailableTimer = null;
+  const UNAVAILABLE_DURATION = 4000;
+
+  function showUnavailable(message) {
+    if (!unavailableToast) {
+      unavailableDim = document.createElement('div');
+      unavailableDim.id = 'unavailableDim';
+      unavailableDim.onclick = hideUnavailable;
+      document.body.appendChild(unavailableDim);
+
+      unavailableToast = document.createElement('div');
+      unavailableToast.id = 'unavailableToast';
+      unavailableToast.setAttribute('role', 'alert');
+      unavailableToast.onclick = hideUnavailable;
+      document.body.appendChild(unavailableToast);
+    }
+
+    unavailableToast.textContent = message || 'This feature is not available right now.';
+
+    clearTimeout(unavailableTimer);
+    unavailableToast.classList.remove('show');
+    void unavailableToast.offsetWidth;
+    unavailableToast.classList.add('show');
+    unavailableDim.classList.add('show');
+
+    unavailableTimer = setTimeout(hideUnavailable, UNAVAILABLE_DURATION);
+  }
+
+  function hideUnavailable() {
+    clearTimeout(unavailableTimer);
+    if (unavailableToast) unavailableToast.classList.remove('show');
+    if (unavailableDim) unavailableDim.classList.remove('show');
+  }
 
   function initIcons(root) {
     (root || document).querySelectorAll('[data-icon]:not([data-icon-ready])').forEach((el) => {
@@ -118,10 +153,9 @@
   const featureCount = $('featureCount');
 
   // build all rows once; searching only shows / hides them so nothing flickers or re-loads
-  featureList.innerHTML = FEATURES.map((f) => `
-      <div class="feature-row">
+  featureList.innerHTML = FEATURES.map((f, i) => `
+      <div class="feature-row" data-fi="${i}" role="button" tabindex="0">
         <div class="media-card" style="--g:${f.g}">
-          ${f.badge ? badgeTag(f.badge) : ''}
           ${imgTag(f.img, 'Feature')}
         </div>
         <p>${f.title}</p>
@@ -129,6 +163,21 @@
   initIcons(featureList);
 
   const featureRows = Array.from(featureList.querySelectorAll('.feature-row'));
+
+  // a feature with a page opens it; one without a page shows the "not available" popup
+  const openFeature = (row) => {
+    const f = FEATURES[+row.dataset.fi];
+    if (f && f.link) location.href = f.link; else showUnavailable();
+  };
+  featureList.addEventListener('click', (e) => {
+    const row = e.target.closest('.feature-row');
+    if (row) openFeature(row);
+  });
+  featureList.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const row = e.target.closest('.feature-row');
+    if (row) { e.preventDefault(); openFeature(row); }
+  });
   const noResults = featureList.querySelector('.no-results');
   reveal(featureRows);
   reveal([featureCount]);
@@ -220,109 +269,119 @@
   const saveRecents = () => { try { localStorage.setItem(RECENT_KEY, JSON.stringify(recents)); } catch (e) {} };
   const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-  /* =====================================================
-     STUDENTS (12 - HOPPER)
-     - typing a name or a number in the search shows matching students
-     - tapping a student opens the student modal (No. / Student / name / role)
-     - Enter with a match opens it too
-     ===================================================== */
-  const STUDENTS_RAW = [
-    'ALCANTARA, SHARID VINZ VALENCIANO', 'ALELUYA, JAY LORD CABUELLO', 'ALMONTE, MARC GABRIELLE DOCIL',
-    'AMOROSO, JOSEFF CRISTOFFER MUHI', 'ARGAWANON, JAN RHAIN MENDOZA', 'AYAP, AMBER REIGN ALCARAZ',
-    'AYOSO, EDRHIAN VILLAS', 'BANDALAN, KYLE JASSEM TORMO', 'BORJA, FRANC JAROD FELIX',
-    'CANGAYAO, DOS EUGENE MARCUS GASQUE', 'DELA ROSA, FRANZE DEO JUANILLO', 'FELISILDA, CARL JOHN ZAPANTA',
-    'FRANCISCO, JOHN LESTER ARCIPE', 'JARABE, LEBRON ALLEN MEDURA', 'JUANCE, JOHN MARK ACENAS',
-    'LOBENDINO, ARMIL JOHN PIELAGO', 'LUMPOD, CHRISTIAN ANDRIE BASAÑEZ', 'MARQUEZ, RYLE KRISTOF SERRANO',
-    'MILGAR, ERIC JOHN ARCIPE', 'OLANOLAN, CHRISTOPHER JOHANN DADOR', 'PINEDA, CHRISTIAN PAUL ACOSTA',
-    'PRETAL, JOHN VINCENT TICAR', 'SALINO, CLIFFORD JAY DOMO', 'SANTILLAN, JOHN HILDO PANILAGA',
-    'SARA, RHINO NAMOCO', 'SERVO, KERVIN KYLE DELA CRUZ', 'ALCANSE, ROCHEL ANN MAE SUGANOG',
-    'AMISTOSO, AIRISH SUELO', 'BADONG, LORRAINE ANDREA AQUINO', 'BARRIOS, DANICA GADAINGAN',
-    'BASIS, AUDREY BEBITA', 'CAUSING, JEAN LOUISSE CINCOLLAGAS'
-  ];
-  // roles shown under the name in the modal (number in the list -> role). Add more here, e.g. { 17: 'PIO', 5: 'Mayor' }
-  const ROLES = { 17: 'Developer' };
-
-  const NAME_PARTS = ['dela', 'de', 'del', 'delos', 'san', 'santa'];
-  const cap = (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+  // lower-case + no accents, so searching matches names however they are typed
   const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
-  // "LUMPOD, CHRISTIAN ANDRIE BASAÑEZ" -> "Lumpod, Christian Andrie B."
-  function formatName(raw) {
-    const [last, rest] = raw.split(',').map((x) => x.trim());
-    const w = (rest || '').split(/\s+/).filter(Boolean);
-    let mid = w.length > 1 ? [w.pop()] : [];
-    if (mid.length && w.length > 1 && NAME_PARTS.includes(w[w.length - 1].toLowerCase())) mid.unshift(w.pop());
-    const initial = mid.length ? ' ' + cap(mid[0]).charAt(0) + '.' : '';
-    return last.split(/\s+/).map(cap).join(' ') + ', ' + w.map(cap).join(' ') + initial;
-  }
-
-  const STUDENTS = STUDENTS_RAW.map((raw, i) => {
-    const name = formatName(raw);
-    return { no: i + 1, name, role: ROLES[i + 1] || '', key: norm(raw + ' ' + name) };
-  });
 
   const studentList = $('studentList');
   const recentSub = $('recentSub');
 
-  function findStudents(raw) {
+  /* ---------- Firebase accounts (Search) ----------
+     Personnel = the accounts saved in Firebase. A signed-in user can search all of them by User Name or Account Type.
+     Nothing outside Firebase is searchable. */
+  let scope = { ready: false, signedIn: false, onlyType: '', accounts: [], at: 0 };
+  let scopeLoading = null, shownAccounts = [];
+  const hasSession = () => typeof getSessionUserId === 'function' && !!getSessionUserId();
+  const shortType = (t) => (t === 'Developers' ? 'Developer' : t === 'Handlers' ? 'Handler' : t);
+
+  // Online = flagged online in Firebase AND heartbeat is recent (same rule as the Users List)
+  const accOnline = (a) => (typeof isAccountOnline === 'function' && a.presence) ? isAccountOnline(a.presence) : !!a.online;
+  // Developer effect (red lightning on the Account Type): every Developers account, plus any account with the Developer role
+  const isDevCard = (c) => c.type === 'Developers' || c.role === 'Developer';
+  let scopeUnsub = null, presenceTick = 0, openPid = '', qmViewedRefresh = null;
+
+  // keeps the green dots in step with Firebase presence (result rows + the open profile card)
+  function refreshPresence() {
+    studentList.querySelectorAll('.account-item').forEach((li) => {
+      const a = shownAccounts[+li.dataset.aid];
+      const dot = li.querySelector('.on-dot');
+      if (a && dot) dot.hidden = !accOnline(a);
+    });
+    if (stuOpen && openPid) {
+      const a = scope.accounts.find((x) => x.pid === openPid);
+      if (a) pc.dot.hidden = !accOnline(a);
+    }
+  }
+
+  const scopeSig = (list) => list.map((a) => [a.pid, a.name, a.type, a.role, (a.photo || '').length, (a.banner || '').length].join('|')).join('~');
+
+  function applyScope(r) {
+    const prevSig = scopeSig(scope.accounts), wasSignedIn = scope.signedIn, wasReady = scope.ready;
+    scope = {
+      ready: true, signedIn: r.signedIn, onlyType: r.onlyType, at: Date.now(),
+      accounts: r.accounts.map((a) => {
+        const name = a.username || (a.type + ' Account');
+        return Object.assign({}, a, { name, key: norm(name + ' ' + a.type) });
+      })
+    };
+    input.placeholder = 'Search a personnel or features...';
+    const changed = !wasReady || wasSignedIn !== r.signedIn || prevSig !== scopeSig(scope.accounts);
+    if (changed) { if (searching) renderRecent(); if (stuOpen) renderViewers(lastViewerIds); if (qmViewedRefresh) qmViewedRefresh(); }
+    else {
+      // only presence changed: swap in the fresh objects and just update the dots (no list flicker)
+      shownAccounts = shownAccounts.map((o) => scope.accounts.find((x) => x.pid === o.pid) || o);
+      refreshPresence();
+    }
+  }
+
+  function loadScope() {
+    if (scopeLoading) return scopeLoading;                      // one live Firebase listener for the whole page
+    if (typeof listenSearchAccounts !== 'function') { scope.ready = true; return Promise.resolve(); }
+    const fail = (e) => {
+      console.warn('Search accounts:', e);
+      scope.ready = true;               // Firebase unreachable: nothing to search until it is back
+    };
+    scopeLoading = listenSearchAccounts(applyScope, fail).then((unsub) => { scopeUnsub = unsub; }).catch((e) => { scopeLoading = null; fail(e); });
+    // the heartbeat stops silently when a tab closes, so re-check the 90 s timeout regularly
+    if (!presenceTick) presenceTick = setInterval(refreshPresence, 15000);
+    return scopeLoading;
+  }
+
+  function findAccounts(raw) {
+    if (!scope.signedIn) return [];
     const q = norm(raw).trim().replace(/\s+/g, ' ');
     if (!q) return [];
-    const num = q.replace(/^(no\.?|#)\s*/, '');
-    if (/^\d+$/.test(num)) return STUDENTS.filter((s) => String(s.no).startsWith(num));
-    const tokens = q.replace(/[.,]/g, ' ').split(' ').filter(Boolean);
-    return STUDENTS.filter((s) => tokens.every((t) => s.key.includes(t)));
+    const tokens = q.split(' ').filter(Boolean);
+    return scope.accounts.filter((a) => tokens.every((t) => a.key.includes(t)));
   }
 
   function renderStudents(q) {
-    const hits = q ? findStudents(q) : [];
-    studentList.hidden = hits.length === 0;
-    studentList.innerHTML = hits.map((s, i) => `
-      <li class="recent-item student-item" data-no="${s.no}" style="--e:${Math.min(i, 7)}">
-        <span class="no-badge">${s.no}</span>
+    shownAccounts = q ? findAccounts(q).slice(0, 30) : [];
+    studentList.hidden = shownAccounts.length === 0;
+    studentList.innerHTML = shownAccounts.map((a, i) => `
+      <li class="recent-item student-item account-item" data-aid="${i}" style="--e:${Math.min(i, 7)}">
+        <span class="no-badge${PC_IMG_OK.test(a.photo || '') ? ' has-photo' : ''}">${PC_IMG_OK.test(a.photo || '') ? '<img alt="" draggable="false" src="' + a.photo + '">' : esc(a.name.charAt(0).toUpperCase())}<i class="on-dot"${accOnline(a) ? '' : ' hidden'} title="Online"></i></span>
         <div class="recent-line">
-          <button type="button" class="recent-text">${highlight(s.name, q)}</button>
-          <span class="stu-chip">Student</span>
+          <button type="button" class="recent-text">${highlight(a.name, q)}</button>
+          <span class="stu-chip${isDevCard(a) ? ' dev-fx' : ''}">${esc(shortType(a.type))}</span>
         </div>
       </li>`).join('');
-    return hits.length;
+    studentList.querySelectorAll('.stu-chip.dev-fx').forEach((ch) => addSparks(ch, 5, 0.6));
+    return shownAccounts.length;
   }
 
   /* ---------- student modal ---------- */
   const stuOverlay = $('stuOverlay');
-  const stuNo = $('stuNo');
-  const stuName = $('stuName');
-  const stuRole = $('stuRole');
   const stuClose = $('stuClose');
-  let stuOpen = false, stuCloseTimer = 0, stuCountRaf = 0, stuLastFocus = null;
+  let stuOpen = false, stuCloseTimer = 0, stuLastFocus = null, toastTimer = 0;
+  const pc = { banner: $('pcBanner'), pic: $('pcPic'), dot: $('pcDot'), name: $('pcName'), type: $('pcType'), toast: $('pcToast') };
+  const PC_IMG_OK = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/;
+  const PC_PERSON = '<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
 
-  function countUpNo(to) {
-    cancelAnimationFrame(stuCountRaf);
-    const write = (n) => { stuNo.textContent = 'No. ' + n; };
-    if (reduceMotion) { write(to); return; }
-    write(0);
-    const t0 = performance.now(), delay = 260, dur = 600;
-    const tick = (now) => {
-      const p = Math.min(1, Math.max(0, (now - t0 - delay) / dur));
-      write(Math.round(to * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) stuCountRaf = requestAnimationFrame(tick);
-    };
-    stuCountRaf = requestAnimationFrame(tick);
-  }
-
-  // red lightning bolts that flash around the outside of the letters
-  function addSparks(host, n) {
+  // red lightning bolts that flash on and right around the letters (kept tight so they fit the Developer text)
+  function addSparks(host, n, k) {
     const r = (lo, hi) => lo + Math.random() * (hi - lo);
     for (let i = 0; i < n; i++) {
       const s = document.createElement('span');
       s.className = 'dev-spark';
-      const edge = Math.random() < 0.5;                       // half near the top/bottom edge, half near the sides
-      const x = edge ? r(-4, 100) : (Math.random() < 0.5 ? r(-12, -2) : r(100, 110));
-      const y = edge ? (Math.random() < 0.5 ? r(-70, -20) : r(100, 150)) : r(-10, 70);
-      const w = r(10, 16);
-      s.style.left = x + '%';
-      s.style.top = y + '%';
-      s.style.width = w + 'px';
-      s.style.height = (w * 2.2) + 'px';
+      // centre of each bolt lands on the text box itself: spread along the word, slightly past the ends and edges
+      const cx = r(-3, 103);
+      const cy = r(-5, 105);
+      const w = r(8, 13) * (k || 1);
+      const h = w * 2.2;
+      s.style.left = 'calc(' + cx.toFixed(1) + '% - ' + (w / 2).toFixed(1) + 'px)';
+      s.style.top = 'calc(' + cy.toFixed(1) + '% - ' + (h / 2).toFixed(1) + 'px)';
+      s.style.width = w.toFixed(1) + 'px';
+      s.style.height = h.toFixed(1) + 'px';
       s.style.transform = 'rotate(' + Math.round(r(-35, 35)) + 'deg)';
       const bolt = document.createElement('i');
       bolt.style.animationDuration = r(1.4, 2.8).toFixed(2) + 's';
@@ -333,31 +392,91 @@
     }
   }
 
-  function openStudent(no) {
-    const s = STUDENTS[no - 1];
-    if (!s) return;
+  // a Firebase account: banner, profile picture, User Name, Account Type and online dot all come from Firebase
+  function openAccount(a) {
+    showCard({ name: a.name, type: a.type, role: a.role, photo: a.photo, banner: a.banner, online: accOnline(a), pid: a.pid });
+    trackViews(a);
+  }
+
+  /* ---------- Viewed: the 2 newest visitors of this card (Firebase profileViews) ----------
+     Visible to everyone in Search. Opening a card saves you as its newest visitor; tapping a visitor's picture opens their card. */
+  const pcViewed = $('pcViewed'), pcViewedList = $('pcViewedList');
+  let viewsUnsub = null, lastViewerIds = [];
+
+  function stopViews() {
+    if (viewsUnsub) { try { viewsUnsub(); } catch (e) {} viewsUnsub = null; }
+    lastViewerIds = [];
+    pcViewed.hidden = true;
+    pcViewedList.innerHTML = '';
+  }
+
+  function renderViewers(ids) {
+    lastViewerIds = ids || [];
+    // everyone sees the same 2 newest visitors on a card (including their own visit)
+    const people = lastViewerIds
+      .map((id) => scope.accounts.find((x) => x.pid === id)).filter(Boolean).slice(0, 2);
+    pcViewed.hidden = people.length === 0;
+    pcViewedList.innerHTML = people.map((a) => `<button type="button" class="pc-viewer" data-vid="${esc(a.pid)}" aria-label="Open ${esc(a.name)}">${PC_IMG_OK.test(a.photo || '') ? '<img alt="" draggable="false" src="' + a.photo + '">' : PC_PERSON}</button>`).join('');
+  }
+
+  function trackViews(a) {
+    if (!a.pid || typeof listenProfileViews !== 'function') return;
+    if (scope.signedIn && typeof recordProfileView === 'function') recordProfileView(a.pid);
+    try { viewsUnsub = listenProfileViews(a.pid, renderViewers, (e) => console.warn('Viewed:', e && e.code ? e.code : e)); }
+    catch (e) { console.warn('Viewed:', e); }
+  }
+
+  pcViewedList.addEventListener('click', (e) => {
+    const b = e.target.closest('.pc-viewer');
+    if (!b) return;
+    const a = scope.accounts.find((x) => x.pid === b.dataset.vid);
+    if (a) openAccount(a);
+  });
+
+  function showCard(c) {
     clearTimeout(stuCloseTimer);
+    stopViews();
+    openPid = c.pid || '';
     stuLastFocus = document.activeElement;
-    stuName.textContent = s.name;
-    stuRole.textContent = s.role;
-    stuRole.querySelectorAll('.dev-spark').forEach((n) => n.remove());
-    stuRole.classList.toggle('dev-fx', s.role === 'Developer');
-    if (s.role === 'Developer') addSparks(stuRole, 12);
-    stuNo.setAttribute('aria-label', 'No. ' + s.no);
+    pc.name.textContent = c.name;
+    pc.type.textContent = c.note ? c.type + ' \u00b7 ' + c.note : c.type;
+    pc.type.querySelectorAll('.dev-spark').forEach((n) => n.remove());
+    pc.type.classList.toggle('dev-fx', isDevCard(c));
+    if (isDevCard(c)) addSparks(pc.type, 8);
+    if (PC_IMG_OK.test(c.banner || '')) pc.banner.style.backgroundImage = 'url("' + c.banner + '")';
+    else pc.banner.style.backgroundImage = '';
+    if (PC_IMG_OK.test(c.photo || '')) { pc.pic.innerHTML = '<img alt="" draggable="false">'; pc.pic.firstChild.src = c.photo; }
+    else pc.pic.innerHTML = PC_PERSON;
+    pc.dot.hidden = !c.online;
+    pc.toast.classList.remove('show');
     stuOverlay.hidden = false;
+    stuOverlay.scrollTop = 0;
     stuOverlay.classList.remove('show', 'closing');
     void stuOverlay.offsetWidth;            // restart the animations every time
     stuOverlay.classList.add('show');
     document.body.classList.add('stu-open');
     stuOpen = true;
-    countUpNo(s.no);
     stuClose.focus({ preventScroll: true });
   }
+
+  function pcToast(msg) {
+    pc.toast.textContent = msg;
+    pc.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => pc.toast.classList.remove('show'), 1800);
+  }
+
+  // quick buttons (Digital ID, Gift and the two yellow rows)
+  stuOverlay.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    showUnavailable();
+  });
 
   function closeStudent() {
     if (!stuOpen) return;
     stuOpen = false;
-    cancelAnimationFrame(stuCountRaf);
+    stopViews();
     stuOverlay.classList.remove('show');
     stuOverlay.classList.add('closing');
     stuCloseTimer = setTimeout(() => {
@@ -380,23 +499,27 @@
   studentList.addEventListener('click', (e) => {
     const li = e.target.closest('.student-item');
     if (!li) return;
-    const s = STUDENTS[+li.dataset.no - 1];
-    addRecent(s.name);
-    input.blur();
-    openStudent(s.no);
+    if (li.dataset.aid !== undefined) {
+      const a = shownAccounts[+li.dataset.aid];
+      if (!a) return;
+      addRecent(a.name);
+      input.blur();
+      openAccount(a);
+      return;
+    }
   });
 
-  // a search that matches students stays on the results (and opens the modal when there is only one match)
+  // a search that matches personnel stays on the results (and opens the card when there is only one match)
   function runSearch(v) {
     v = v.trim();
     if (!v) return;
-    const hits = findStudents(v);
-    if (!hits.length) { commit(v); return; }
+    const accs = findAccounts(v);
+    if (!accs.length) { commit(v); return; }
     addRecent(v);
     input.value = v;
     input.blur();
     renderRecent();
-    if (hits.length === 1) openStudent(hits[0].no);
+    if (accs.length === 1) openAccount(accs[0]);
   }
 
   function addRecent(term) {
@@ -443,7 +566,7 @@
   function renderRecent() {
     const { q, rows } = currentRows();
     const sCount = renderStudents(q);
-    recentTitle.textContent = sCount ? 'Students' : 'Recent';
+    recentTitle.textContent = sCount ? 'Results' : 'Recent';
     recentSub.hidden = !(sCount && rows.length);
     // suggestions only show while the search box is empty (typing hides them, clearing/X brings them back)
     const sw = $('suggestWrap'); if (sw) sw.hidden = !!q;
@@ -472,6 +595,7 @@
 
   function openSearch() {
     if (searching) return;
+    loadScope();
     searching = true; expanded = false;
     savedScroll = window.scrollY;
     document.body.classList.add('searching');
@@ -540,6 +664,31 @@
 
   moreBtn.addEventListener('click', () => { expanded = !expanded; applyLimit(true); });
 
+  /* Suggestions (under Recent): Show More / Show Less */
+  const SUGGEST_VISIBLE = 4;
+  const sugList = $('suggestList');
+  const sugMoreBtn = $('suggestMoreBtn');
+  const sugMoreLabel = $('suggestMoreLabel');
+  let sugExpanded = false;
+  function applySuggestLimit(animate) {
+    if (!sugList || !sugMoreBtn) return;
+    const items = Array.from(sugList.children);
+    let k = 0;
+    items.forEach((li, i) => {
+      const hide = !sugExpanded && i >= SUGGEST_VISIBLE;
+      if (!hide && li.hidden) {
+        li.hidden = false;
+        if (animate) { li.style.setProperty('--e', Math.min(k++, 6)); li.style.animation = 'none'; void li.offsetWidth; li.style.animation = ''; }
+      } else if (hide) li.hidden = true;
+    });
+    sugMoreBtn.hidden = items.length <= SUGGEST_VISIBLE;
+    sugMoreBtn.classList.toggle('open', sugExpanded);
+    sugMoreBtn.setAttribute('aria-expanded', sugExpanded ? 'true' : 'false');
+    sugMoreLabel.textContent = sugExpanded ? 'Show Less' : 'Show More';
+  }
+  if (sugMoreBtn) sugMoreBtn.addEventListener('click', () => { sugExpanded = !sugExpanded; applySuggestLimit(true); });
+  applySuggestLimit(false);
+
   menuBtn.addEventListener('click', (e) => { e.stopPropagation(); setMenu(!quick.classList.contains('open')); });
   qOverlay.addEventListener('click', () => setMenu(false));
   // swipe the panel to the right to close it
@@ -556,6 +705,62 @@
     rowsEl.forEach((li, i) => { li.style.animationDelay = (i * 40) + 'ms'; li.classList.add('leaving'); });
     setTimeout(() => { recents = []; saveRecents(); expanded = false; renderRecent(); }, rowsEl.length ? 300 + rowsEl.length * 40 : 0);
   });
+
+  /* =====================================================
+     QUICK MENU USER CARD (synced with Firebase)
+     Shows the signed-in account's banner, profile picture,
+     User Name and Account Type. Updates live when the account
+     changes in Firebase. Nobody signed in = Guest.
+     ===================================================== */
+  (function () {
+    const nameEl = $('qmUserName'), typeEl = $('qmUserType'), banner = $('qmBanner'), avatar = $('qmAvatar'), dot = $('qmDot');
+    if (!nameEl || !typeEl || !banner || !avatar) return;
+    const PERSON = '<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+    const IMG_OK = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/;
+
+    function render(p) {
+      nameEl.textContent = p ? (p.username || p.userId) : 'Guest';
+      typeEl.textContent = p ? (p.type || 'Account') : 'Not signed in';
+      if (dot) dot.hidden = !(p && p.online);        // green dot = this account is online in Firebase
+      if (p && IMG_OK.test(p.banner)) { banner.style.backgroundImage = 'url("' + p.banner + '")'; banner.classList.add('has-img'); }
+      else { banner.style.backgroundImage = ''; banner.classList.remove('has-img'); }
+      if (p && IMG_OK.test(p.photo)) {
+        avatar.innerHTML = '<img alt="" draggable="false">';
+        avatar.firstChild.src = p.photo;
+      } else avatar.innerHTML = PERSON;
+    }
+
+    render(null);
+    // Online status: mark the signed-in account online in Firebase (heartbeat every 30 s)
+    if (typeof connectPresence === 'function') connectPresence().catch((e) => console.warn('Presence:', e));
+    const id = (typeof getSessionUserId === 'function') ? getSessionUserId() : '';
+    if (!id || typeof listenAccountProfile !== 'function') return;
+    try { listenAccountProfile(id, render, (e) => console.warn('Quick Menu profile:', e)); }
+    catch (e) { console.warn('Quick Menu profile:', e); }
+
+    // Viewed (Quick Menu): visible ONLY to the signed-in user - it reads the visitors of their own User ID, nobody else's
+    const vBox = $('qmViewed'), vList = $('qmViewedList'), vCard = $('qmUser');
+    if (!vBox || !vList || typeof listenProfileViews !== 'function') return;
+    let vIds = [];
+    function renderViewed() {
+      const people = vIds.filter((x) => x !== id)
+        .map((x) => scope.accounts.find((a) => a.pid === x)).filter(Boolean).slice(0, 2);
+      vBox.hidden = people.length === 0;
+      if (vCard) vCard.classList.toggle('has-viewed', people.length > 0);
+      vList.innerHTML = people.map((a) => `<button type="button" class="pc-viewer qm-viewer" data-vid="${esc(a.pid)}" aria-label="Open ${esc(a.name)}">${PC_IMG_OK.test(a.photo || '') ? '<img alt="" draggable="false" src="' + a.photo + '">' : PC_PERSON}</button>`).join('');
+    }
+    qmViewedRefresh = renderViewed;                 // re-draws when the accounts list (names / pictures) updates
+    vList.addEventListener('click', (e) => {
+      const b = e.target.closest('.qm-viewer');
+      const a = b && scope.accounts.find((x) => x.pid === b.dataset.vid);
+      if (!a) return;
+      setMenu(false);
+      openAccount(a);
+    });
+    loadScope();
+    try { listenProfileViews(id, (ids) => { vIds = ids; renderViewed(); }, (e) => console.warn('Quick Menu viewed:', e && e.code ? e.code : e)); }
+    catch (e) { console.warn('Quick Menu viewed:', e); }
+  })();
 
   function setupCarousel(root, track, dotsEl) {
     const slides = Array.from(track.children);
